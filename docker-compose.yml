@@ -5,7 +5,8 @@ services:
     env_file:
       - database.env # configure postgres
     volumes:
-      - ^%cd^%/data:/var/lib/postgresql/data/ # persist data even if container shuts down
+      - database-data:/var/lib/postgresql/data/ # persist data even if container sh
+      - ./data:/data
     ports:
       - "5432:5432"
 

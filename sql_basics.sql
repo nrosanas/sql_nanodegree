@@ -53,3 +53,32 @@ LIMIT 10;
 SELECT (poster_amt_usd/(standard_amt_usd + gloss_amt_usd + poster_amt_usd)*100) AS poster_rev, id, account_id
 FROM orders
 LIMIT 10;
+
+/* All the companies whose names start with 'C'. */
+SELECT name 
+from accounts 
+WHERE name LIKE 'C%'
+
+
+/*All companies whose names contain the string 'one' somewhere in the name.*/
+SELECT name 
+from accounts 
+WHERE name LIKE '%one%'
+
+/*All companies whose names end with 's'.*/
+SELECT name 
+from accounts 
+WHERE name LIKE '%s'
+
+/* Use the accounts table to find the account name, primary_poc, and sales_rep_id for Walmart, Target, and Nordstrom.**/
+SELECT name, primary_poc, sales_rep_id 
+FROM accounts 
+WHERE name IN ('Walmart', 'Target', 'Nordstrom');
+
+/* 
+Use the web_events table to find all information regarding individuals who were contacted via the channel of organic or adwords.
+*/
+
+SELECT * 
+FROM web_events
+WHERE channel IN ('organic', 'adwords');

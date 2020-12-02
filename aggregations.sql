@@ -148,7 +148,28 @@ ON r.id = s.region_id
 GROUP BY r.name, w.channel
 ORDER BY num_events DESC;
 
+/* Use DISTINCT to test if there are any accounts associated with more than one region.*/
 
+SELECT  r.name region_name, a.id account_id
+FROM accounts a 
+JOIN sales_reps s
+ON a.sales_rep_id = s.id
+JOIN region r
+ON r.id = s.region_id
 
+/* Ens retorna 351 files, tenim per tant 351 relacions de region amb account, si ara mirem quants accounts son diferents podrem veure quants n'hi ha*/
 
+SELECT DISTINCT id, name
+FROM accounts
+/* També ens dóna 351 resultats per tant cada account està associat només a una regió
 
+/*Have any sales reps worked on more than one account?*/
+
+SELECT a.id, s.id s_rep_id
+FROM accounts a
+JOIN sales_reps s 
+ON a.sales_rep_id = s.id 
+/*fem el mateix raonament que abans i ens retorna 351 igual que abans ja que hi ha 351 comptes */
+SELECT DISTINCT id
+FROM sales_reps
+/* Ens retorna 50 ids, per tant hi ha representatns que treballen en més d'un compte*/

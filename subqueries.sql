@@ -132,3 +132,27 @@ WHERE ct_purchases.ct > (
 	ON a.name = sum_qty2.name
 	JOIN orders o 
 	ON o.account_id = a.id)
+
+    /*For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
+*/
+SELECT a.name, w.channel, COUNT(w.*)
+FROM accounts a
+JOIN web_events w
+ON w.account_id = a.id
+WHERE a.name LIKE (
+	SELECT t3.name 
+		FROM 
+			(SELECT MAX(t1.sum_amt)
+			FROM
+				(SELECT a.name, SUM(o.total_amt_usd) AS sum_amt
+				FROM accounts a
+				JOIN orders o
+				ON a.id = o.account_id
+				GROUP BY 1 ) AS t1) AS t2
+		JOIN (SELECT a.name, SUM(o.total_amt_usd) AS sum_amt
+			FROM accounts a
+			JOIN orders o
+			ON a.id = o.account_id
+			GROUP BY 1) AS t3
+		ON t2.max = t3.sum_amt)
+GROUP BY 1,2 

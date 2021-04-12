@@ -46,3 +46,46 @@ ALTER TABLE people ADD COLUMN "date_of_birth" DATE;
 UPDATE people SET date_of_birth = CURRENT_DATE-born_ago::interval;
 --4
 ALTER TABLE people DROP COLUMN born_ago;
+
+
+
+-- FINAL EXERCISE
+/*
+Exercise Instructions¶
+
+For this exercise, you'll be given a table called user_data, and asked to make some changes to it. In order to make sure that your changes happen coherently, you're asked to turn off auto-commit, and create your own transaction around all the queries you will run.
+
+Here are the changes you will need to make:
+
+    Due to some obscure privacy regulations, all users from California and New York must be removed from the data set.
+    For the remaining users, we want to split up the name column into two new columns: first_name and last_name.
+    Finally, we want to simplify the data by changing the state column to a state_id column.
+        First create a states table with an automatically generated id and state abbreviation.
+        Then, migrate all the states from the dataset to that table, taking care to not have duplicates.
+        Once all the states are migrated and have their unique ID, add a state_id column to the user_data table.
+        Use the appropriate query to make the state_id of the user_data column match the appropriate ID from the new states table.
+        Remove the now redundant state column from the user_data table.
+
+
+
+*/
+
+\set AUTOCOMMIT off
+START TRANSACTION;
+DELETE FROM user_data WHERE state='CA';
+COMMIT;
+START TRANSACTION;
+ALTER TABLE user_data ADD COLUMN first_name VARCHAR;
+ALTER TABLE user_data ADD COLUMN last_name VARCHAR;
+UPDATE user_data SET first_name =  SPLIT_PART(NAME,' ', 1 ),last_name =  SPLIT_PART(NAME,' ', 2 ) ;
+ALTER TABLE user_data DROP COLUMN name;
+COMMIT;
+START TRANSACTION;
+CREATE TABLE states (state_id SERIAL, state VARCHAR(2));
+INSERT INTO states (state) SELECT DISTINCT state FROM user_data;
+COMMIT;
+START TRANSACTION;
+ALTER TABLE user_data ADD COLUMN state_id INT;
+INSERT INTO user_data (state_id) SELECT s.state_id from states s join user_data u on u.state = s.state;
+UPDATE user_data u SET state_id = ( SELECT s.state_id from states s where s.state = u.state);
+ALTER TABLE user_data DROP COLUMN state;

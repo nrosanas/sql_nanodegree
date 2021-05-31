@@ -62,3 +62,4 @@ CREATE INDEX "find_books_by_partial_title" ON "books" (
 
 -- For a given topic, we need to be able to quickly find all the books 
 --   tagged with it.
+

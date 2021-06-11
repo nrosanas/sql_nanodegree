@@ -22,3 +22,13 @@ db.events.find({
 		{'browser.os':"windows"}
 	]
 }).sort({timestamp:-1}).limit(100).pretty()
+//better solution
+
+db.events.countDocuments(
+		{'browser.vendor':"firefox",
+		'timestamp' :{$gte: ISODate("2019-04-20")}}
+)
+db.events.find(
+		{'browser.vendor':"chrome",
+		'browser.os':"windows"}
+).sort({timestamp:-1}).limit(100).pretty()

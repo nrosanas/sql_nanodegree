@@ -1,0 +1,58 @@
+-- Tiny social app with redis
+
+-- Increment user_id PK
+INCR user_id
+
+-- use value to create new user_id
+HMSET users:1 username Bilbo email bilbo@shire.me
+-- reverse lookup
+HSET users_by_username Bilbo 1
+
+INCR user_id
+HMSET users:2 username Gandalf email gandalf@shire.me
+HSET users_by_username Gandalf 2
+
+-- we create sets to represent follows
+SADD followers:2 1
+SADD following:1 2
+
+-- Exercise
+#!/bin/bash
+docker run --name red -d -v $PWD:/app redis:5.0.9
+wget "https://github.com/ziad-saab/scenarios/raw/master/redis-exercise/init.redis"
+docker exec -it red bash -c 'redis-cli < /app/init.redis && redis-cli'
+
+// we input keys * to get all the keys
+1.    How is the system currently storing the primary keys used for users and books?
+in hashes
+
+exploring the system we can see the pk are stored in a hash and the values are incremented every time a book or user is added
+
+2.    What is the name of the user with ID 3?
+HGET users:3 name
+some user
+
+3.    What would be the ID of the next book?
+HGET ids books
+4.    Notice that books have authors in common. Fix that by creating a new entity called authors. 
+Add the authors to the system, and then modify the books to refer to authors by their ID instead of their name.
+
+HINCRBY ids authors 1
+HMSET authors:1 name "George Orwell"
+HSET books:1 author_id 1
+HDEl books:1 author_id
+
+HMSET authors:2 name "George Orwell"
+HSET books:2 author_id 2
+5.    Devise a strategy that would allow users to search for books in a partial-match, case-insensitive way.
+127.0.0.1:6379> sadd book_search:a 2
+127.0.0.1:6379> sadd book_search:an 2
+127.0.0.1:6379> sadd book_search:ani 2
+127.0.0.1:6379> sadd book_search:anim 2
+127.0.0.1:6379> sadd book_search:anima 2
+127.0.0.1:6379> sadd book_search:animal 2
+127.0.0.1:6379> sadd "book_search:animal f" 2
+127.0.0.1:6379> sadd "book_search:animal fa" 2
+127.0.0.1:6379> sadd "book_search:animal far" 2
+127.0.0.1:6379> sadd "book_search:animal farm" 2
+127.0.0.1:6379> 

@@ -24,7 +24,7 @@ CREATE TABLE "comments"(
    "id" SERIAL PRIMARY KEY,
    "user_id" INTEGER REFERENCES "users" ("id") ON DELETE SET NULL,
    "post_id" INTEGER REFERENCES "posts" ("id") ON DELETE CASCADE,
-   "comment_id" INTEGER REFERENCES "comments" ("id") ON DELETE SET NULL,
+   "comment_id" INTEGER REFERENCES "comments" ("id") ON DELETE SET NULL
 );
 
 
@@ -32,6 +32,7 @@ CREATE TABLE "votes"(
    "post_id" INTEGER REFERENCES "posts" ("id") ON DELETE CASCADE,
    "user_id" INTEGER REFERENCES "users" ("id") ON DELETE SET NULL,
    "value" SMALLINT
+   PRIMARY KEY ("post_id", "user_id")
 );
 
 CREATE TABLE ""(
